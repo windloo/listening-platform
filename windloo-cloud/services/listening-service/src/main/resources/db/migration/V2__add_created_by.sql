@@ -1,0 +1,3 @@
+ALTER TABLE category ADD COLUMN created_by BIGINT NULL;
+ALTER TABLE album    ADD COLUMN created_by BIGINT NULL;
+ALTER TABLE episode  ADD COLUMN created_by BIGINT NULL;

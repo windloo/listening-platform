@@ -1,0 +1,1 @@
+export interface UserDTO { id: string; userName: string; phone: string; creationTime: string; roles: string[]; avatar: string | null; nickname: string }

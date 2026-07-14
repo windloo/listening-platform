@@ -1,0 +1,40 @@
+server:
+  port: 80
+spring:
+  application:
+    name: gateway
+  profiles:
+    active: dev
+  cloud:
+    nacos:
+      server-addr: ${NACOS_HOST:localhost}:${NACOS_PORT:8848}
+      config:
+        import-check:
+          enabled: false
+      discovery:
+        namespace: ${spring.profiles.active:public}
+    gateway:
+      routes:
+        - id: search-route
+          uri: lb://search-service
+          predicates:
+            - Path=/api/search/**
+        - id: encoder-route
+          uri: lb://media-encoder-service
+          predicates:
+            - Path=/api/encoder/**
+        - id: file-route
+          uri: lb://file-service
+          predicates:
+            - Path=/api/file/**
+        - id: listening-route
+          uri: lb://listening-service
+          predicates:
+            - Path=/api/listening/**
+        - id: identity-route
+          uri: lb://identity-service
+          predicates:
+            - Path=/api/identity/**
+jwt:
+  secret: ${JWT_SECRET}
+  expire-seconds: ${JWT_EXPIRE_SECONDS:86400}

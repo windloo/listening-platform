@@ -1,0 +1,33 @@
+# === 敏感文件 ===
+.env
+.env.local
+.env.*.local
+
+# === 构建产物 ===
+target/
+dist/
+*.tsbuildinfo
+vite.config.js
+vite.config.d.ts
+
+# === 依赖 ===
+node_modules/
+.pnpm-store/
+
+# === 运行时数据 ===
+file-storage/
+*.log
+
+# === IDE ===
+.idea/
+.vs/
+*.iml
+*.swp
+.DS_Store
+
+# === 其他 ===
+*.tar.gz
+*.zip
+HELP.md
+docs
+DEPLOY.md

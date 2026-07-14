@@ -1,0 +1,38 @@
+server:
+  port: 14000
+spring:
+  application:
+    name: search-service
+  profiles:
+    active: dev
+  cloud:
+    nacos:
+      server-addr: ${NACOS_HOST:localhost}:${NACOS_PORT:8848}
+      config:
+        import-check:
+          enabled: false
+      discovery:
+        enabled: true
+        namespace: ${spring.profiles.active:public}
+    sentinel:
+      transport:
+        dashboard: ${SENTINEL_DASHBOARD:localhost:8858}
+      eager: true
+seata:
+  enabled: false
+  tx-service-group: windloo_tx_group
+  service:
+    vgroup-mapping:
+      windloo_tx_group: default
+elasticsearch:
+  host: ${ES_HOST:localhost}
+  port: ${ES_PORT:9200}
+  username: ${ES_USERNAME:elastic}
+  password: ${ES_PASSWORD:120712}
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+  zipkin:
+    tracing:
+      endpoint: http://${ZIPKIN_HOST:localhost}:9411/api/v2/spans

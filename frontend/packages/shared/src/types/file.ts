@@ -1,0 +1,1 @@
+export interface UploadedItem { id: string; fileName: string; fileSizeInBytes: number; fileSha256Hash: string; remoteUrl: string }

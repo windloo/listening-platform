@@ -1,0 +1,198 @@
+# ============================================================
+# windloo-Cloud 全量 Docker Compose
+# 用法：docker compose -f docker-compose.full.yml up -d --build
+# 说明：所有服务使用 host 网络模式，通过 localhost 互相通信
+#       网关端口改为 8080，Nginx 占用 80
+# ============================================================
+
+services:
+  # ==================== 基础设施 ====================
+  mysql:
+    image: mysql:8.0
+    network_mode: host
+    env_file: .env
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --default-authentication-plugin=mysql_native_password
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./docker/init-databases.sql:/docker-entrypoint-initdb.d/init-databases.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      retries: 30
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    network_mode: host
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      retries: 20
+    restart: unless-stopped
+
+  nacos:
+    image: nacos/nacos-server:v2.3.2
+    network_mode: host
+    environment:
+      MODE: standalone
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://localhost:8848/nacos/v1/console/health/readiness"]
+      interval: 10s
+      retries: 30
+    restart: unless-stopped
+
+  seata-server:
+    image: apache/seata-server:2.1.0
+    network_mode: host
+    environment:
+      STORE_MODE: file
+    restart: unless-stopped
+
+  zipkin:
+    image: openzipkin/zipkin:3.4
+    network_mode: host
+    restart: unless-stopped
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.15.0
+    network_mode: host
+    environment:
+      discovery.type: single-node
+      xpack.security.enabled: "true"
+      ELASTIC_PASSWORD: "${ES_PASSWORD:-120712}"
+      ES_JAVA_OPTS: "-Xms512m -Xmx512m"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf -u elastic:${ES_PASSWORD:-120712} http://localhost:9200 || exit 1"]
+      interval: 10s
+      retries: 30
+    restart: unless-stopped
+
+  sentinel-dashboard:
+    image: bladex/sentinel-dashboard:1.8.8
+    network_mode: host
+    environment:
+      SERVER_PORT: "8858"
+      JAVA_TOOL_OPTIONS: "-Dcsp.sentinel.dashboard.server=localhost:8858 -Xms128m -Xmx256m"
+    restart: unless-stopped
+
+  # ==================== 后端微服务 ====================
+  gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SERVICE: gateway
+    network_mode: host
+    env_file: .env
+    environment:
+      SERVER_PORT: "8080"          # 网关改用 8080，腾出 80 给 Nginx
+      JAVA_OPTS: "-Xmx128m"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      nacos:
+        condition: service_healthy
+    restart: unless-stopped
+
+  identity-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SERVICE: services/identity-service
+    network_mode: host
+    env_file: .env
+    environment:
+      JAVA_OPTS: "-Xmx256m"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      nacos:
+        condition: service_healthy
+    restart: unless-stopped
+
+  listening-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SERVICE: services/listening-service
+    network_mode: host
+    env_file: .env
+    environment:
+      JAVA_OPTS: "-Xmx256m"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      nacos:
+        condition: service_healthy
+      seata-server:
+        condition: service_started
+    restart: unless-stopped
+
+  file-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SERVICE: services/file-service
+    network_mode: host
+    env_file: .env
+    environment:
+      JAVA_OPTS: "-Xmx128m"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      nacos:
+        condition: service_healthy
+    restart: unless-stopped
+
+  media-encoder-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SERVICE: services/media-encoder-service
+    network_mode: host
+    env_file: .env
+    environment:
+      JAVA_OPTS: "-Xmx256m"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      nacos:
+        condition: service_healthy
+      seata-server:
+        condition: service_started
+    restart: unless-stopped
+
+  search-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SERVICE: services/search-service
+    network_mode: host
+    env_file: .env
+    environment:
+      JAVA_OPTS: "-Xmx256m"
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+      nacos:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # ==================== 前端 (Nginx) ====================
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    network_mode: host
+    depends_on:
+      gateway:
+        condition: service_started
+    restart: unless-stopped
+
+volumes:
+  mysql_data:

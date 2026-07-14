@@ -1,0 +1,10 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "jsx": "preserve",
+    "types": ["vite/client", "element-plus/global"],
+    "baseUrl": ".",
+    "paths": { "@windloo/shared": ["../../packages/shared/src/index.ts"] }
+  },
+  "include": ["src/**/*.ts", "src/**/*.vue", "env.d.ts"]
+}

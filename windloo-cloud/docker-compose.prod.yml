@@ -1,0 +1,7 @@
+services:
+  identity-service:
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+  gateway:
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
