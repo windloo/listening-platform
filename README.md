@@ -16,19 +16,19 @@
 
 ### 首页
 
-![](D:\summer\Desktop\sundries\ScreenShot_2026-07-13_195741_881.png)
+![](.\images\ScreenShot_2026-07-13_195741_881.png)
 
 ### elasticsearch搜索页
 
-![](D:\summer\Desktop\sundries\ScreenShot_2026-07-13_195805_180.png)
+![](.\images\ScreenShot_2026-07-13_195805_180.png)
 
 ### 单集
 
-![](D:\summer\Desktop\sundries\ScreenShot_2026-07-13_195814_455.png)
+![](.\images\ScreenShot_2026-07-13_195814_455.png)
 
 ## 后端
 
-![](D:\summer\Desktop\sundries\ScreenShot_2026-07-13_195831_036.png)
+![](.\images\ScreenShot_2026-07-13_195831_036.png)
 
 ## 为了系统学习 Spring Cloud Alibaba 微服务体系，本项目围绕一个结构相对简单的英语听力平台业务，引入 Gateway、Nacos、Redis、Seata、Sentinel 等组件，重点实践现代 Java 微服务开发流程，而非追求复杂业务本身。
 
