@@ -4,31 +4,25 @@
 >
 > 管理端演示地址：[82.156.126.145/admin/](http://82.156.126.145/admin/)
 
-## 目录
-
-[TOC]
-
-
-
 ## 项目演示
 
 ## 前端
 
 ### 首页
 
-![](.\images\ScreenShot_2026-07-13_195741_881.png)
+![](https://github-production-user-asset-6210df.s3.amazonaws.com/101187942/621473496-f1fbd86c-c40c-42a1-b847-dd1ac701df6a.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVCODYLSA53PQK4ZA%2F20260714%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20260714T124651Z&X-Amz-Expires=300&X-Amz-Signature=a1f08bf8313fcd576c70315a7a2e2b6c087f845e9773ae79f322d8775433b562&X-Amz-SignedHeaders=host&response-content-type=image%2Fpng)
 
 ### elasticsearch搜索页
 
-![](.\images\ScreenShot_2026-07-13_195805_180.png)
+![](https://github-production-user-asset-6210df.s3.amazonaws.com/101187942/621473546-1b289792-efa5-43e1-9224-be7344005da5.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVCODYLSA53PQK4ZA%2F20260714%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20260714T124637Z&X-Amz-Expires=300&X-Amz-Signature=cbf1817a587e1968cfa1b46e49b7550819952780abc33ac53f906535127f9adf&X-Amz-SignedHeaders=host&response-content-type=image%2Fpng)
 
 ### 单集
 
-![](.\images\ScreenShot_2026-07-13_195814_455.png)
+![](https://github-production-user-asset-6210df.s3.amazonaws.com/101187942/621473560-873c83f1-1767-4fbf-91c0-dd3219de998c.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVCODYLSA53PQK4ZA%2F20260714%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20260714T124459Z&X-Amz-Expires=300&X-Amz-Signature=0c076f99f59cfe7a6d63b96bff8f6f420c684db32311301c726d36d0e01039e4&X-Amz-SignedHeaders=host&response-content-type=image%2Fpng)
 
 ## 后端
 
-![](.\images\ScreenShot_2026-07-13_195831_036.png)
+![](https://github-production-user-asset-6210df.s3.amazonaws.com/101187942/621473117-47e51386-fd43-4b94-83ee-c1c156dac843.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVCODYLSA53PQK4ZA%2F20260714%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20260714T124438Z&X-Amz-Expires=300&X-Amz-Signature=1c7435090e3a673fbe12e5d53413f4a31bba9924c2daf4136adc01fd1abfa7ba&X-Amz-SignedHeaders=host&response-content-type=image%2Fpng)
 
 ## 为了系统学习 Spring Cloud Alibaba 微服务体系，本项目围绕一个结构相对简单的英语听力平台业务，引入 Gateway、Nacos、Redis、Seata、Sentinel 等组件，重点实践现代 Java 微服务开发流程，而非追求复杂业务本身。
 
