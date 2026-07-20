@@ -2,7 +2,7 @@
 
 > 前端演示地址：[windloo 听力平台](https://windloo.top/)
 >
-> 管理端演示地址：[https://windloo.top/admin/](http://82.156.126.145/admin/)
+> 管理端演示地址：[windloo 管理端](https://windloo.top/admin/)
 
 ## 项目演示
 
