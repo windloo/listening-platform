@@ -40,6 +40,8 @@ class AiIntegrationTest {
     }
 
     @Autowired ConversationMapper conversationMapper;
+    @Autowired org.springframework.test.web.servlet.MockMvc mvc;
+    @Autowired com.windloo.ai.service.ConversationService conversationService;
 
     @Test void flyway_and_mapper_work() {
         Conversation c = new Conversation();
@@ -51,5 +53,31 @@ class AiIntegrationTest {
         assertNotNull(got);
         assertEquals("hello", got.getTitle());
         assertEquals(0, got.getIsDeleted());
+    }
+
+    @Test
+    void conversation_service_crud_and_ownership() {
+        Long me = 1L, other = 2L;
+        com.windloo.ai.entity.Conversation c = conversationService.createConversation(me, "我的会话");
+        com.baomidou.mybatisplus.extension.plugins.pagination.Page<com.windloo.ai.entity.Conversation> page =
+                conversationService.listConversations(me, 1, 20);
+        assertTrue(page.getRecords().stream().anyMatch(x -> x.getId().equals(c.getId())));
+        conversationService.listMessages(me, c.getId());
+        assertThrows(com.windloo.common.exception.BizException.class,
+                () -> conversationService.listMessages(other, c.getId()));
+        conversationService.renameConversation(me, c.getId(), "改名");
+        conversationService.deleteConversation(me, c.getId());
+        assertNull(conversationMapper.selectById(c.getId()));
+    }
+
+    @Test
+    void http_conversation_endpoints_require_auth_and_work() throws Exception {
+        mvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get("/api/ai/conversations"))
+                .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.status().isUnauthorized());
+        mvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get("/api/ai/conversations")
+                        .header(com.windloo.common.security.SecurityConstants.HEADER_USER_ID, "1")
+                        .header(com.windloo.common.security.SecurityConstants.HEADER_USER_ROLES, "[USER]"))
+                .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.status().isOk())
+                .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath("$.code").value(0));
     }
 }
