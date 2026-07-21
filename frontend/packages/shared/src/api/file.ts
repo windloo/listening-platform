@@ -19,7 +19,7 @@ export async function adminUpload(file: File): Promise<UploadedItem> {
 
 export async function uploadWithDedup(file: File): Promise<UploadedItem> {
   // crypto.subtle 仅在 HTTPS 或 localhost 下可用，HTTP 环境下跳过去重直接上传
-  if (window.isSecureContext && crypto?.subtle) {
+  if (crypto?.subtle) {
     const hash = await computeSha256(file)
     const exists = await adminCheckExists(file.size, hash)
     if (exists) return exists
