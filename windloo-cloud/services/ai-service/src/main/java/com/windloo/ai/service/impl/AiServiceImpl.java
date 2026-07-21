@@ -47,20 +47,20 @@ public class AiServiceImpl implements AiService {
     }
 
     @Override
-    public ChatStream prepare(Long userId, Long conversationId, String message) {
-        Prepared p = doPrepare(userId, conversationId, message);
+    public ChatStream prepare(Long userId, Long conversationId, Long episodeId, String message) {
+        Prepared p = doPrepare(userId, conversationId, episodeId, message);
         Flux<String> tokens = chatClient.prompt().messages(p.messages()).stream().content();
         return new ChatStream(p.conversationId(), p.userMessageId(), tokens);
     }
 
-    Prepared doPrepare(Long userId, Long conversationId, String message) {
+    Prepared doPrepare(Long userId, Long conversationId, Long episodeId, String message) {
         checkQuota(userId);
         Conversation conv = conversationId == null
                 ? conversationService.createConversation(userId, truncate(message, 30))
                 : conversationService.requireOwned(userId, conversationId);
 
         List<Message> history = loadHistory(conv.getId());
-        List<ContextProvider.ContextChunk> chunks = contextProvider.retrieve(message, userId, null);
+        List<ContextProvider.ContextChunk> chunks = contextProvider.retrieve(message, userId, episodeId);
 
         Message userMsg = new Message();
         userMsg.setConversationId(conv.getId());

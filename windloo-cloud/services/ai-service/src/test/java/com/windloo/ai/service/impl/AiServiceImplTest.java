@@ -40,7 +40,7 @@ class AiServiceImplTest {
         when(contextProvider.retrieve(anyString(), any(), any())).thenReturn(List.of());
         when(messageMapper.selectList(any())).thenReturn(List.of());
 
-        AiServiceImpl.Prepared p = service.doPrepare(1L, null, "what is a noun?");
+        AiServiceImpl.Prepared p = service.doPrepare(1L, null, null, "what is a noun?");
 
         verify(conversationService).createConversation(eq(1L), eq("what is a noun?"));
         ArgumentCaptor<Message> captor = ArgumentCaptor.forClass(Message.class);
@@ -56,7 +56,7 @@ class AiServiceImplTest {
         when(contextProvider.retrieve(anyString(), any(), any())).thenReturn(List.of());
         when(messageMapper.selectList(any())).thenReturn(List.of());
 
-        AiServiceImpl.Prepared p = service.doPrepare(1L, 7L, "hi");
+        AiServiceImpl.Prepared p = service.doPrepare(1L, 7L, null, "hi");
 
         verify(conversationService).requireOwned(1L, 7L);
         verify(conversationService, never()).createConversation(any(), any());
@@ -72,7 +72,7 @@ class AiServiceImplTest {
         when(contextProvider.retrieve(anyString(), any(), any()))
                 .thenReturn(List.of(new ContextProvider.ContextChunk("ep1", "bg text")));
 
-        AiServiceImpl.Prepared p = service.doPrepare(1L, 7L, "new q");
+        AiServiceImpl.Prepared p = service.doPrepare(1L, 7L, null, "new q");
 
         assertEquals(4, p.messages().size());
     }
@@ -80,7 +80,7 @@ class AiServiceImplTest {
     @Test void doPrepare_enforces_daily_quota() {
         service = new AiServiceImpl(chatClient, conversationService, messageMapper, contextProvider, redisUtil, 10, 5);
         when(redisUtil.incr(anyString())).thenReturn(6L);
-        assertThrows(BizException.class, () -> service.doPrepare(1L, null, "hi"));
+        assertThrows(BizException.class, () -> service.doPrepare(1L, null, null, "hi"));
         verify(conversationService, never()).createConversation(any(), any());
     }
 
@@ -91,7 +91,7 @@ class AiServiceImplTest {
         when(messageMapper.selectList(any())).thenReturn(List.of());
         when(chatClient.prompt().messages(anyList()).stream().content()).thenReturn(Flux.just("Hel", "lo"));
 
-        AiService.ChatStream s = service.prepare(1L, null, "hi");
+        AiService.ChatStream s = service.prepare(1L, null, null, "hi");
         assertEquals(List.of("Hel", "lo"), s.tokens().collectList().block());
     }
 
@@ -103,5 +103,16 @@ class AiServiceImplTest {
         verify(messageMapper).insert(captor.capture());
         assertEquals("ASSISTANT", captor.getValue().getRole());
         assertEquals("a noun is a word", captor.getValue().getContent());
+    }
+
+    @Test void doPrepare_passes_episodeId_to_context_provider() {
+        Conversation c = new Conversation(); c.setId(7L); c.setUserId(1L); c.setTitle("t");
+        when(conversationService.requireOwned(1L, 7L)).thenReturn(c);
+        when(contextProvider.retrieve(eq("hi"), eq(1L), eq(99L))).thenReturn(List.of());
+        when(messageMapper.selectList(any())).thenReturn(List.of());
+
+        service.doPrepare(1L, 7L, 99L, "hi");
+
+        verify(contextProvider).retrieve(eq("hi"), eq(1L), eq(99L));
     }
 }

@@ -23,7 +23,8 @@ public class ChatController {
         SseEmitter emitter = new SseEmitter(120_000L);
         Long userId = SecurityUtil.currentUserId();
         Long cid = req.conversationId() == null || req.conversationId().isBlank() ? null : Long.parseLong(req.conversationId());
-        AiService.ChatStream stream = aiService.prepare(userId, cid, req.message());
+        Long eid = req.episodeId() == null || req.episodeId().isBlank() ? null : Long.parseLong(req.episodeId());
+        AiService.ChatStream stream = aiService.prepare(userId, cid, eid, req.message());
 
         send(emitter, "meta", new ChatMeta(String.valueOf(stream.conversationId()), String.valueOf(stream.userMessageId())));
         StringBuilder acc = new StringBuilder();
