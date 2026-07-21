@@ -34,7 +34,7 @@ public class ChatController {
                     acc.append(token); send(emitter, "token", new ChatToken(token));
                     },
                 err -> {
-                    send(emitter, "error", new ChatError(50010, "AI 调用失败"));
+                    send(emitter, "error", new ChatError(50010, err.getMessage() != null ? err.getMessage() : "AI 调用失败"));
                     emitter.completeWithError(err);
                     },
                 () -> {

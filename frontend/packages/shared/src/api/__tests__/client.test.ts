@@ -35,4 +35,19 @@ describe('handleHttpError', () => {
     try { handleHttpError({ response: { status: 500 } }); throw new Error('should throw') }
     catch (e) { expect((e as BizError).code).toBe(50000) }
   })
+
+  it('uses backend body code/msg when present (e.g. wrong password)', () => {
+    try { handleHttpError({ response: { status: 400, data: { code: 40001, msg: '登录失败' } } }); throw new Error('should throw') }
+    catch (e) { expect((e as BizError).code).toBe(40001); expect((e as BizError).message).toBe('登录失败') }
+  })
+
+  it('uses backend body for 429', () => {
+    try { handleHttpError({ response: { status: 429, data: { code: 42901, msg: '额度已用完' } } }); throw new Error('should throw') }
+    catch (e) { expect((e as BizError).code).toBe(42901); expect((e as BizError).message).toBe('额度已用完') }
+  })
+
+  it('network error (no response) falls back to 50000', () => {
+    try { handleHttpError({}); throw new Error('should throw') }
+    catch (e) { expect((e as BizError).code).toBe(50000) }
+  })
 })

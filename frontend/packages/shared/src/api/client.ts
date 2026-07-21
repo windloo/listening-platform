@@ -16,10 +16,28 @@ let onUnauthorized: () => void = () => {}
 export function setOnUnauthorized(fn: () => void): void { onUnauthorized = fn }
 
 export function handleHttpError(err: unknown): never {
-  const status = (err as any)?.response?.status
-  if (status === 401) { clearToken(); onUnauthorized(); throw new BizError(40100, '未登录或登录已过期') }
-  if (status === 403) throw new BizError(40300, '无权限')
-  throw new BizError(50000, '服务异常，请稍后重试')
+  const resp = (err as any)?.response
+  const status = resp?.status as number | undefined
+  const body = resp?.data as { code?: number; msg?: string } | undefined
+  if (status === 401) { clearToken(); onUnauthorized() }
+  const code = (body && typeof body.code === 'number') ? body.code : fallbackCode(status)
+  const msg = (body && body.msg) ? body.msg : fallbackMsg(status)
+  throw new BizError(code, msg)
+}
+
+function fallbackCode(status?: number): number {
+  if (status === 401) return 40100
+  if (status === 403) return 40300
+  if (status === 429) return 42900
+  return 50000
+}
+
+function fallbackMsg(status?: number): string {
+  if (status === 401) return '未登录或登录已过期'
+  if (status === 403) return '无权限'
+  if (status === 429) return '请求过于频繁，请稍后再试'
+  if (status && status >= 500) return '服务器异常，请稍后重试'
+  return '请求失败，请稍后重试'
 }
 
 export const apiClient = axios.create({ baseURL, timeout: 30000 })

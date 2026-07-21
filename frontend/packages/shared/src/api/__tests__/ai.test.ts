@@ -39,4 +39,15 @@ describe('streamChat', () => {
     await streamChat({ message: 'hi' }, { onError: (e: any) => { err = e } })
     expect(err.code).toBe(429)
   })
+
+  it('uses backend error body when present', async () => {
+    ;(globalThis as any).fetch = vi.fn().mockResolvedValue({
+      ok: false, status: 400,
+      json: async () => ({ code: 42901, msg: '今日提问额度已用完' }),
+    })
+    let err: any
+    await streamChat({ message: 'hi' }, { onError: (e: any) => { err = e } })
+    expect(err.code).toBe(42901)
+    expect(err.msg).toBe('今日提问额度已用完')
+  })
 })

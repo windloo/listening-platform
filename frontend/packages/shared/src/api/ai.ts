@@ -31,7 +31,18 @@ export async function streamChat(req: ChatRequest, cb: StreamCallbacks): Promise
     headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) },
     body: JSON.stringify(req),
   })
-  if (!resp.ok || !resp.body) { cb.onError?.({ code: resp.status, msg: `HTTP ${resp.status}` }); return }
+  if (!resp.ok) {
+    let code = resp.status
+    let msg = `HTTP ${resp.status}`
+    try {
+      const d = await resp.json()
+      if (d && typeof d.code === 'number') code = d.code
+      if (d && typeof d.msg === 'string' && d.msg) msg = d.msg
+    } catch { /* 非 JSON 响应,保留 HTTP 状态文案 */ }
+    cb.onError?.({ code, msg })
+    return
+  }
+  if (!resp.body) { cb.onError?.({ code: resp.status, msg: '无响应流' }); return }
   const reader = resp.body.getReader()
   const decoder = new TextDecoder()
   let buffer = ''
