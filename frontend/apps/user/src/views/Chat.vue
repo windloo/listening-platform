@@ -13,9 +13,12 @@
     <section class="main">
       <div class="messages" ref="msgBox">
         <div v-for="m in messages" :key="m.id" class="msg" :class="m.role.toLowerCase()">
-          <div class="bubble">{{ m.content }}</div>
+          <div class="bubble">
+            <MarkdownView v-if="m.role === 'ASSISTANT'" :content="m.content" />
+            <template v-else>{{ m.content }}</template>
+          </div>
         </div>
-        <div v-if="streaming" class="msg assistant"><div class="bubble">{{ pending }}</div></div>
+        <div v-if="streaming" class="msg assistant"><div class="bubble"><MarkdownView :content="pending" /></div></div>
       </div>
       <div class="composer">
         <el-input v-model="input" type="textarea" :rows="2" placeholder="问个英语问题…" @keydown.enter.exact.prevent="send" />
@@ -29,6 +32,7 @@
 import { ref, onMounted, nextTick } from 'vue'
 import { ElMessage } from 'element-plus'
 import { listConversations, getMessages, createConversation, deleteConversation, streamChat, type ConversationDTO, type MessageDTO } from '@windloo/shared'
+import MarkdownView from '../components/MarkdownView.vue'
 
 const conversations = ref<ConversationDTO[]>([])
 const messages = ref<MessageDTO[]>([])
