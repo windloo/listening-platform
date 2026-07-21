@@ -12,6 +12,10 @@ public enum ErrorCode {
     INIT_DONE(40009, "已初始化"),
     UNAUTHORIZED(40100, "未认证"),
     FORBIDDEN(40300, "无权限"),
+    AI_CALL_FAILED(50010, "AI 调用失败"),
+    AI_CONTEXT_TOO_LONG(50011, "AI 上下文过长"),
+    AI_QUOTA_EXCEEDED(42901, "今日提问额度已用完"),
+    AI_RATE_LIMITED(42902, "请求过于频繁"),
     SERVER_ERROR(50000, "服务器内部错误");
     private final int code;
     private final String msg;

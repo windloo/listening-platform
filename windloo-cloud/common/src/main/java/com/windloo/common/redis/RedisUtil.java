@@ -13,4 +13,7 @@ public class RedisUtil {
     }
     public String get(String key) { return redis.opsForValue().get(key); }
     public boolean delete(String key) { return Boolean.TRUE.equals(redis.delete(key)); }
+
+    public Long incr(String key) { return redis.opsForValue().increment(key); }
+    public void expire(String key, long ttlSeconds) { redis.expire(key, Duration.ofSeconds(ttlSeconds)); }
 }
