@@ -11,6 +11,7 @@
         <module>file-service</module>
         <module>media-encoder-service</module>
         <module>search-service</module>
+        <module>ai-service</module>
     </modules>
     <dependencies>
         <dependency><groupId>com.windloo</groupId><artifactId>common</artifactId></dependency>
