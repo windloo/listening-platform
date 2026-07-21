@@ -8,17 +8,36 @@
             <template #append><el-button @click="doSearch"><el-icon><Search /></el-icon></el-button></template>
           </el-input>
         </div>
+        <div class="nav-auth">
+          <el-button v-if="!auth.token" type="primary" link @click="router.push('/login')">登录</el-button>
+          <el-dropdown v-else @command="onCommand">
+            <span class="user-link">{{ auth.user?.nickname || '我的' }} <el-icon><ArrowDown /></el-icon></span>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item command="chat">我的对话</el-dropdown-item>
+                <el-dropdown-item command="logout">退出</el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
+        </div>
       </div>
     </header>
     <main class="content"><router-view /></main>
-    <footer class="footer">windloo 听力平台 · 英语听力练习</footer>
+    <footer class="footer">windloo 听力平台 · 英语听力练习 · <a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener" style="color:#999;text-decoration:none;">京ICP备2026044089号</a></footer>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useAuthStore } from './stores/auth'
 const router = useRouter()
+const auth = useAuthStore()
+if (auth.token) auth.loadUser().catch(() => {})
+function onCommand(c: string) {
+  if (c === 'chat') router.push('/chat')
+  else if (c === 'logout') { auth.logout(); router.push('/') }
+}
 const keyword = ref('')
 function doSearch() { if (keyword.value.trim()) router.push({ name: 'search', query: { keyword: keyword.value.trim() } }) }
 </script>
@@ -35,4 +54,6 @@ function doSearch() { if (keyword.value.trim()) router.push({ name: 'search', qu
   .nav-inner { flex-direction: column; gap: 8px }
   .search-box { max-width: 100%; width: 100% }
 }
+.nav-auth { margin-left: auto }
+.user-link { cursor: pointer; color: #409eff; display: inline-flex; align-items: center; gap: 4px }
 </style>
