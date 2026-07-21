@@ -184,6 +184,23 @@ services:
     restart: unless-stopped
 
   # ==================== 前端 (Nginx) ====================
+  ai-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SERVICE: services/ai-service
+    network_mode: host
+    env_file: .env
+    environment:
+      JAVA_OPTS: "-Xmx256m"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      nacos:
+        condition: service_healthy
+    restart: unless-stopped
+
   frontend:
     build:
       context: ../frontend
