@@ -35,7 +35,7 @@ spring:
   ai:
     openai:
       base-url: ${ARK_BASE_URL:https://ark.cn-beijing.volces.com/api/plan/v3}
-      api-key: ${ARK_API_KEY}
+      api-key: ${ARK_API_KEY:dummy}
       chat:
         options:
           model: ${ARK_MODEL:ark-code-latest}
