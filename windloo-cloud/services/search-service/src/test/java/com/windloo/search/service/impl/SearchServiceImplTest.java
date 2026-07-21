@@ -46,4 +46,31 @@ class SearchServiceImplTest {
         when(repository.findById(2L)).thenReturn(Optional.empty());
         assertEquals(List.of(), service.searchInEpisode(2L, "x", 5));
     }
+
+    @Test void searchInEpisode_timestamp_returns_window_around_time() {
+        EpisodeIndex idx = new EpisodeIndex();
+        idx.setId(1L);
+        List<EpisodeIndex.SentenceDoc> ss = new ArrayList<>();
+        ss.add(doc(0, 1000, "intro"));
+        ss.add(doc(94000, 96000, "the question text"));
+        ss.add(doc(97000, 99000, "follow up"));
+        idx.setSentences(ss);
+        when(repository.findById(1L)).thenReturn(Optional.of(idx));
+        List<SentenceDTO> r = service.searchInEpisode(1L, "1分35秒应该选哪个答案", 3);
+        assertTrue(r.size() > 0 && r.size() <= 3);
+        assertTrue(r.stream().anyMatch(s -> s.text().contains("the question text")));
+    }
+
+    @Test void searchInEpisode_keyword_matches_split_tokens() {
+        when(repository.findById(1L)).thenReturn(Optional.of(episode(1L, "I love apples", "oranges are sweet", "apples and oranges")));
+        List<SentenceDTO> r = service.searchInEpisode(1L, "apples oranges", 5);
+        assertEquals(3, r.size());
+        assertEquals("apples and oranges", r.get(0).text());
+    }
+
+    private EpisodeIndex.SentenceDoc doc(long start, long end, String text) {
+        EpisodeIndex.SentenceDoc d = new EpisodeIndex.SentenceDoc();
+        d.setStartMs(start); d.setEndMs(end); d.setText(text);
+        return d;
+    }
 }
