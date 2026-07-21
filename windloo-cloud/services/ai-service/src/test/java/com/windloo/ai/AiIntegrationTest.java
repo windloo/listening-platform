@@ -42,6 +42,8 @@ class AiIntegrationTest {
     @Autowired ConversationMapper conversationMapper;
     @Autowired org.springframework.test.web.servlet.MockMvc mvc;
     @Autowired com.windloo.ai.service.ConversationService conversationService;
+    @org.springframework.boot.test.mock.mockito.MockBean(answer = org.mockito.Answers.RETURNS_DEEP_STUBS)
+    org.springframework.ai.chat.client.ChatClient chatClient;
 
     @Test void flyway_and_mapper_work() {
         Conversation c = new Conversation();
@@ -79,5 +81,37 @@ class AiIntegrationTest {
                         .header(com.windloo.common.security.SecurityConstants.HEADER_USER_ROLES, "[USER]"))
                 .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.status().isOk())
                 .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath("$.code").value(0));
+    }
+
+    @Test
+    void chat_requires_auth() throws Exception {
+        mvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+                        .post("/api/ai/chat")
+                        .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
+                        .content("{\"message\":\"hi\"}"))
+                .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.status().isUnauthorized());
+    }
+
+    @Test
+    void chat_streams_sse_events() throws Exception {
+        org.mockito.Mockito.when(chatClient.prompt().messages(org.mockito.ArgumentMatchers.anyList()).stream().content())
+                .thenReturn(reactor.core.publisher.Flux.just("Hel", "lo"));
+        mvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+                        .post("/api/ai/chat")
+                        .header(com.windloo.common.security.SecurityConstants.HEADER_USER_ID, "1")
+                        .header(com.windloo.common.security.SecurityConstants.HEADER_USER_ROLES, "[USER]")
+                        .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
+                        .content("{\"message\":\"hi\"}"))
+                .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.status().isOk())
+                .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.content()
+                        .contentTypeCompatibleWith(org.springframework.http.MediaType.TEXT_EVENT_STREAM))
+                .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.content()
+                        .string(org.hamcrest.Matchers.containsString("meta")))
+                .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.content()
+                        .string(org.hamcrest.Matchers.containsString("token")))
+                .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.content()
+                        .string(org.hamcrest.Matchers.containsString("Hel")))
+                .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.content()
+                        .string(org.hamcrest.Matchers.containsString("done")));
     }
 }

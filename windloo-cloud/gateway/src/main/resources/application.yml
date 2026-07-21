@@ -35,6 +35,10 @@ spring:
           uri: lb://identity-service
           predicates:
             - Path=/api/identity/**
+        - id: ai-route
+          uri: lb://ai-service
+          predicates:
+            - Path=/api/ai/**
 jwt:
   secret: ${JWT_SECRET}
   expire-seconds: ${JWT_EXPIRE_SECONDS:86400}
