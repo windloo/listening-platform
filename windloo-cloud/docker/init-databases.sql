@@ -3,6 +3,7 @@ CREATE DATABASE IF NOT EXISTS windloo_identity;
 CREATE DATABASE IF NOT EXISTS windloo_listening;
 CREATE DATABASE IF NOT EXISTS windloo_encoder;
 CREATE DATABASE IF NOT EXISTS windloo_file;
+CREATE DATABASE IF NOT EXISTS windloo_ai;
 
 USE windloo_listening;
 CREATE TABLE IF NOT EXISTS undo_log (
