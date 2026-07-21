@@ -4,6 +4,11 @@ import { createPinia, setActivePinia } from 'pinia'
 import ElementPlus from 'element-plus'
 import Chat from '../Chat.vue'
 
+vi.mock('vue-router', () => ({
+  useRouter: () => ({ push: vi.fn() }),
+  useRoute: () => ({ query: {} }),
+}))
+
 vi.mock('@windloo/shared', () => ({
   listConversations: vi.fn().mockResolvedValue({ list: [], total: 0, page: 1, size: 20 }),
   getMessages: vi.fn().mockResolvedValue([]),

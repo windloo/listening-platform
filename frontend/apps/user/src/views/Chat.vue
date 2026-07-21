@@ -11,6 +11,7 @@
       </div>
     </aside>
     <section class="main">
+      <el-alert v-if="episodeId" type="info" :closable="false" show-icon style="margin-bottom:12px">📌 就本集提问模式:AI 会参考本集字幕回答</el-alert>
       <div class="messages" ref="msgBox">
         <div v-for="m in messages" :key="m.id" class="msg" :class="m.role.toLowerCase()">
           <div class="bubble">
@@ -29,11 +30,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, nextTick } from 'vue'
+import { ref, onMounted, nextTick, computed } from 'vue'
 import { ElMessage } from 'element-plus'
 import { listConversations, getMessages, createConversation, deleteConversation, streamChat, type ConversationDTO, type MessageDTO } from '@windloo/shared'
 import MarkdownView from '../components/MarkdownView.vue'
+import { useRoute } from 'vue-router'
 
+const route = useRoute()
+const episodeId = computed(() => (route.query.episodeId as string) || null)
 const conversations = ref<ConversationDTO[]>([])
 const messages = ref<MessageDTO[]>([])
 const currentId = ref<string | null>(null)
@@ -78,7 +82,7 @@ async function send() {
   messages.value.push(userMsg)
   await scrollBottom()
   try {
-    await streamChat({ conversationId: currentId.value ?? undefined, message: text }, {
+    await streamChat({ conversationId: currentId.value ?? undefined, episodeId: episodeId.value ?? undefined, message: text }, {
       onMeta: (m) => { currentId.value = m.conversationId },
       onToken: (t) => { pending.value += t.content; scrollBottom() },
       onDone: async () => {

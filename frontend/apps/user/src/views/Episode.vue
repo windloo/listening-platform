@@ -11,6 +11,7 @@
       <audio ref="audioRef" :src="episode.audioUrl" controls autoplay style="width:100%;margin-top:16px" @timeupdate="onTimeUpdate" @loadedmetadata="onLoadedMetadata" />
       <div class="current-sentence" v-if="currentSentence">{{ currentSentence.text }}</div>
       <div class="current-sentence empty" v-else>--</div>
+      <el-button type="success" @click="router.push({ name: 'chat', query: { episodeId: String(route.params.id) } })" style="margin-top:12px">就本集提问</el-button>
       <el-button type="primary" @click="addHard" :disabled="!currentSentence" style="margin-top:12px">这句听不懂</el-button>
     </div>
     <div class="hard-list" v-if="hardList.length > 0">
@@ -27,11 +28,12 @@
 </template>
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { getEpisode, type Episode, type Sentence } from '@windloo/shared'
 import { useHardSentences } from '../composables/useHardSentences'
 import { ElMessage } from 'element-plus'
 const route = useRoute()
+const router = useRouter()
 const episode = ref<Episode | null>(null)
 const loading = ref(true)
 const audioRef = ref<HTMLAudioElement>()

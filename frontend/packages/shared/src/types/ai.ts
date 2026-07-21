@@ -16,6 +16,7 @@ export interface MessageDTO {
 
 export interface ChatRequest {
   conversationId?: string
+  episodeId?: string
   message: string
 }
 
