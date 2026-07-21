@@ -29,6 +29,7 @@ public class LocalStorageClient implements StorageClient {
     public org.springframework.core.io.Resource load(String sha256) {
         try {
             Path dir = Paths.get(storageRoot);
+            if (!Files.exists(dir)) return null;
             try (var paths = Files.walk(dir)) {
                 var found = paths.filter(p -> p.toString().replace("\\", "/").contains("/" + sha256 + "/") && Files.isRegularFile(p)).findFirst();
                 if (found.isEmpty()) return null;
