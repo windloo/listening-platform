@@ -71,6 +71,15 @@ public class SearchServiceImpl implements SearchService {
         return new PageResult<>(dtos, hits.getTotalHits(), page, size);
     }
 
+    @Override
+    public List<SentenceDTO> searchInEpisode(Long episodeId, String keyword, int size) {
+        String kwLower = keyword == null ? "" : keyword.trim().toLowerCase();
+        if (kwLower.isEmpty()) return List.of();
+        return repository.findById(episodeId)
+                .map(idx -> matchedSentences(idx.getSentences(), kwLower).stream().limit(size).toList())
+                .orElse(List.of());
+    }
+
     /** 把 DTO 中的带时间戳句子转换为 ES 嵌套文档。 */
     private List<EpisodeIndex.SentenceDoc> toDocs(List<SentenceDTO> sentences) {
         if (sentences == null || sentences.isEmpty()) return List.of();
