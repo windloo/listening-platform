@@ -29,15 +29,28 @@ public class ChatController {
         StringBuilder acc = new StringBuilder();
         final Long convId = stream.conversationId();
         stream.tokens().subscribe(
-                token -> { acc.append(token); send(emitter, "token", new ChatToken(token)); },
-                err -> { send(emitter, "error", new ChatError(50010, "AI 调用失败")); emitter.completeWithError(err); },
-                () -> { Long asstId = aiService.finish(convId, acc.toString()); send(emitter, "done", new ChatMeta(String.valueOf(convId), String.valueOf(asstId))); emitter.complete(); }
+                token -> {
+                    acc.append(token); send(emitter, "token", new ChatToken(token));
+                    },
+                err -> {
+                    send(emitter, "error", new ChatError(50010, "AI 调用失败"));
+                    emitter.completeWithError(err);
+                    },
+                () -> {
+                    Long asstId = aiService.finish(convId, acc.toString());
+                    send(emitter, "done", new ChatMeta(String.valueOf(convId), String.valueOf(asstId)));
+                    emitter.complete();
+                }
         );
         return emitter;
     }
 
     private void send(SseEmitter emitter, String name, Object data) {
-        try { emitter.send(SseEmitter.event().name(name).data(data)); }
-        catch (IOException e) { emitter.completeWithError(e); }
+        try {
+            emitter.send(SseEmitter.event().name(name).data(data));
+        }
+        catch (IOException e) {
+            emitter.completeWithError(e);
+        }
     }
 }

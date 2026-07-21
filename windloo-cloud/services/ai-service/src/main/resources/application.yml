@@ -34,12 +34,15 @@ spring:
       eager: true
   ai:
     openai:
-      base-url: ${ARK_BASE_URL:https://ark.cn-beijing.volces.com/api/plan/v3}
+      base-url: ${ARK_BASE_URL:https://ark.cn-beijing.volces.com/api/coding/v3}
       api-key: ${ARK_API_KEY:dummy}
       chat:
         options:
           model: ${ARK_MODEL:ark-code-latest}
           temperature: 0.7
+        completions-path: /chat/completions
+      embedding:
+        embeddings-path: /embeddings
 mybatis-plus:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
