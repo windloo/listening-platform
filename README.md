@@ -166,3 +166,26 @@ englishStudy/
 本项目借鉴自**杨中科**老师的英语听力项目，在此表示衷心感谢。
 
 > 项目地址：[https://github.com/yangzhongke/NETBookMaterials](https://github.com/yangzhongke/NETBookMaterials)
+
+---
+
+## AI 模块（新增）
+
+在听力平台基础上新增 AI 助手：用户可就英语学习问题与 AI 多轮对话，回复以 Markdown 渲染；在单集页可「就本集提问」，AI 基于该集字幕作答（RAG）。
+
+### 功能
+
+- **AI 聊天**：SSE 流式输出（打字机效果），多轮对话，服务端持久化会话历史。经 Spring AI `ChatClient` 调用火山引擎 Ark（OpenAI 兼容协议）。
+- **Markdown 渲染**：助手回复用 markdown-it 解析 + DOMPurify 消毒，支持标题/列表/表格/代码/链接；流式过程实时渲染。
+- **RAG（单集上下文）**：单集页「就本集提问」→ AI 用关键词/时间戳从该集 ES 字幕检索相关句子（带时间戳）注入上下文。`ContextProvider` 接口抽象，第一阶段关键词检索，语义检索（embedding + kNN）留后续。
+- **用户端登录**：user app 复用 identity-service 的登录/JWT，未登录访问 `/chat` 自动跳登录。
+
+### 新增服务与改动
+
+- **ai-service**（端口 15000，独立库 `windloo_ai`）：Spring AI + SSE `ChatController` + `ConversationService`（会话/消息持久化）+ `ContextProvider`（RAG 接缝，默认 `SearchContextProvider` 经 Feign 调 search-service 检索，带降级）。
+- 网关新增路由 `/api/ai/**`；`model` 模块 `SearchFeignClient` 加 `searchSentences` 方法。
+- 用户端（user app）新增登录页、聊天页 `/chat`、单集页「就本集提问」按钮。
+
+### 技术栈补充
+
+Spring AI 1.0.0-M6（OpenAI starter，接火山引擎 Ark）· markdown-it · DOMPurify · SSE。
