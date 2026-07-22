@@ -45,14 +45,15 @@ class FileServiceImplTest {
         verify(mapper).insert(any(UploadedItem.class));
     }
 
-    @Test void upload_re_saves_when_db_has_record_but_file_missing() throws Exception {
+    @Test void upload_re_saves_and_updates_when_db_has_record_but_file_missing() throws Exception {
         when(mapper.selectList(any())).thenReturn(List.of(existingItem()));
         when(storageClient.load("abc")).thenReturn(null);
         when(storageClient.save(any(), any())).thenReturn("/api/file/files/abc");
         UploadedItem r = service.upload("test.txt", 11, "abc", new ByteArrayInputStream("hello".getBytes()));
         assertEquals("/api/file/files/abc", r.getRemoteUrl());
         verify(storageClient).save(any(), any());
-        verify(mapper).insert(any(UploadedItem.class));
+        verify(mapper).updateById(any(UploadedItem.class));
+        verify(mapper, never()).insert(any(UploadedItem.class));
     }
 
     @Test void checkExists_found_when_file_on_disk() {
