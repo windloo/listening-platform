@@ -40,7 +40,11 @@ public class FileServiceImpl implements FileService {
         List<UploadedItem> list = mapper.selectList(new LambdaQueryWrapper<UploadedItem>()
                 .eq(UploadedItem::getFileSizeInBytes, fileSize)
                 .eq(UploadedItem::getFileSha256Hash, sha256Hash));
-        return list.isEmpty() ? null : list.get(0);
+        if (list.isEmpty()) return null;
+        UploadedItem item = list.get(0);
+        // DB 有记录但文件可能丢失(如重新部署后 file-storage 未持久化);文件不在则视为不存在,触发重新上传
+        if (storageClient.load(sha256Hash) == null) return null;
+        return item;
     }
 
     @Override
