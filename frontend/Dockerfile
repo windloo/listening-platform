@@ -15,3 +15,7 @@ FROM nginx:alpine
 COPY --from=builder /build/apps/admin/dist /usr/share/nginx/html/admin
 COPY --from=builder /build/apps/user/dist /usr/share/nginx/html/user
 COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# 复制 SSL 证书到镜像中
+COPY ssl/windloo.top_bundle.crt /etc/nginx/ssl/windloo.top_bundle.crt
+COPY ssl/windloo.top.key /etc/nginx/ssl/windloo.top.key

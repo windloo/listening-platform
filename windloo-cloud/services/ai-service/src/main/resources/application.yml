@@ -34,7 +34,7 @@ spring:
       eager: true
   ai:
     openai:
-      base-url: ${ARK_BASE_URL:https://ark.cn-beijing.volces.com/api/coding/v3}
+      base-url: ${ARK_BASE_URL:https://ark.cn-beijing.volces.com/api/plan/v3}
       api-key: ${ARK_API_KEY:dummy}
       chat:
         options:

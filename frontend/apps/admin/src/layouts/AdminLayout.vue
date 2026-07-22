@@ -38,6 +38,9 @@
       </el-header>
       <TagsView />
       <el-main class="main"><router-view /></el-main>
+      <el-footer class="footer" height="auto">
+        <a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener">京ICP备2026044089号</a>
+      </el-footer>
     </el-container>
   </el-container>
 </template>
@@ -71,4 +74,6 @@ function onCommand(cmd: string) { if (cmd === 'logout') { auth.logout(); router.
 .header-left { display: flex; align-items: center; gap: 16px }
 .collapse-btn { font-size: 20px; cursor: pointer }
 .user { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; outline: none }
+.footer { text-align: center; padding: 8px 0; color: #999; font-size: 12px }
+.footer a { color: #999; text-decoration: none }
 </style>

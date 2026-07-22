@@ -161,14 +161,6 @@ englishStudy/
 
 ---
 
-## 鸣谢
-
-本项目借鉴自**杨中科**老师的英语听力项目，在此表示衷心感谢。
-
-> 项目地址：[https://github.com/yangzhongke/NETBookMaterials](https://github.com/yangzhongke/NETBookMaterials)
-
----
-
 ## AI 模块（新增）
 
 在听力平台基础上新增 AI 助手：用户可就英语学习问题与 AI 多轮对话，回复以 Markdown 渲染；在单集页可「就本集提问」，AI 基于该集字幕作答（RAG）。
@@ -189,3 +181,12 @@ englishStudy/
 ### 技术栈补充
 
 Spring AI 1.0.0-M6（OpenAI starter，接火山引擎 Ark）· markdown-it · DOMPurify · SSE。
+
+---
+
+## 鸣谢
+
+本项目借鉴自**杨中科**老师的英语听力项目，在此表示衷心感谢。
+
+> 项目地址：[https://github.com/yangzhongke/NETBookMaterials](https://github.com/yangzhongke/NETBookMaterials)
+
