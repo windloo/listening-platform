@@ -2,12 +2,14 @@ package com.windloo.ai.controller;
 import com.windloo.ai.dto.ChatRequest;
 import com.windloo.ai.service.AiService;
 import com.windloo.common.security.SecurityUtil;
+import lombok.extern.slf4j.Slf4j;
 import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import java.io.IOException;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/ai")
 public class ChatController {
@@ -38,8 +40,10 @@ public class ChatController {
                     emitter.completeWithError(err);
                     },
                 () -> {
-                    Long asstId = aiService.finish(convId, acc.toString());
-                    send(emitter, "done", new ChatMeta(String.valueOf(convId), String.valueOf(asstId)));
+                    Long asstId = null;
+                    try { asstId = aiService.finish(convId, acc.toString()); }
+                    catch (Exception ex) { log.warn("finish assistant message failed", ex); }
+                    send(emitter, "done", new ChatMeta(String.valueOf(convId), asstId == null ? "" : String.valueOf(asstId)));
                     emitter.complete();
                 }
         );

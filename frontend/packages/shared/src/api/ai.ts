@@ -46,20 +46,26 @@ export async function streamChat(req: ChatRequest, cb: StreamCallbacks): Promise
   const reader = resp.body.getReader()
   const decoder = new TextDecoder()
   let buffer = ''
-  for (;;) {
-    const { done, value } = await reader.read()
-    if (done) break
-    buffer += decoder.decode(value, { stream: true })
-    const parts = buffer.split('\n\n')
-    buffer = parts.pop() ?? ''
-    for (const part of parts) {
-      const evt = parseSse(part)
-      if (!evt) continue
-      if (evt.event === 'meta') cb.onMeta?.(evt.data)
-      else if (evt.event === 'token') cb.onToken?.(evt.data)
-      else if (evt.event === 'done') cb.onDone?.(evt.data)
-      else if (evt.event === 'error') cb.onError?.(evt.data)
+  let finished = false
+  try {
+    for (;;) {
+      const { done, value } = await reader.read()
+      if (done) break
+      buffer += decoder.decode(value, { stream: true })
+      const parts = buffer.split('\n\n')
+      buffer = parts.pop() ?? ''
+      for (const part of parts) {
+        const evt = parseSse(part)
+        if (!evt) continue
+        if (evt.event === 'meta') cb.onMeta?.(evt.data)
+        else if (evt.event === 'token') cb.onToken?.(evt.data)
+        else if (evt.event === 'done') { finished = true; cb.onDone?.(evt.data) }
+        else if (evt.event === 'error') { finished = true; cb.onError?.(evt.data) }
+      }
     }
+  } catch (e) {
+    // 流正常结束后连接关闭可能抛错;若已收到 done/error(回答已完整),忽略
+    if (!finished) throw e
   }
 }
 
