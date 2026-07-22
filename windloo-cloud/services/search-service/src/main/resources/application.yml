@@ -28,7 +28,7 @@ elasticsearch:
   host: ${ES_HOST:localhost}
   port: ${ES_PORT:9200}
   username: ${ES_USERNAME:elastic}
-  password: ${ES_PASSWORD:120712}
+  password: ${ES_PASSWORD:change-me-es}
 management:
   tracing:
     sampling:
