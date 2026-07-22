@@ -20,6 +20,10 @@
 
 ![](https://github-production-user-asset-6210df.s3.amazonaws.com/101187942/621473560-873c83f1-1767-4fbf-91c0-dd3219de998c.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVCODYLSA53PQK4ZA%2F20260714%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20260714T124459Z&X-Amz-Expires=300&X-Amz-Signature=0c076f99f59cfe7a6d63b96bff8f6f420c684db32311301c726d36d0e01039e4&X-Amz-SignedHeaders=host&response-content-type=image%2Fpng)
 
+### AI对话
+
+![](https://github-production-user-asset-6210df.s3.amazonaws.com/101187942/624857620-b466ef66-7ddd-4335-9165-262ccf48abd3.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVCODYLSA53PQK4ZA%2F20260722%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20260722T035706Z&X-Amz-Expires=300&X-Amz-Signature=67b2dccd3a16cc1fb22c14514d20e5262ab834a8966175acd79748ae8b045191&X-Amz-SignedHeaders=host&response-content-type=image%2Fpng)
+
 ## 后端
 
 ![](https://github-production-user-asset-6210df.s3.amazonaws.com/101187942/621473117-47e51386-fd43-4b94-83ee-c1c156dac843.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVCODYLSA53PQK4ZA%2F20260714%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20260714T124438Z&X-Amz-Expires=300&X-Amz-Signature=1c7435090e3a673fbe12e5d53413f4a31bba9924c2daf4136adc01fd1abfa7ba&X-Amz-SignedHeaders=host&response-content-type=image%2Fpng)
