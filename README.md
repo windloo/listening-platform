@@ -1,9 +1,5 @@
 # windloo · 英语听力练习平台
 
-> 前端演示地址：[windloo 听力平台](https://windloo.top/)
->
-> 管理端演示地址：[windloo 管理端](https://windloo.top/admin/)
-
 ## 项目介绍
 
 windloo英语听力平台 是一个基于 Spring Cloud Alibaba 微服务架构的英语听力练习平台，涵盖「分类 → 专辑 → 单集」三级内容组织，支持字幕同步播放、ES 全文搜索定位、文件秒传、AI助手等功能。用户可与 AI 多轮对话（Markdown 流式渲染），并在单集页「就本集提问」，AI 基于该集字幕内容作答（RAG 检索增强）。
